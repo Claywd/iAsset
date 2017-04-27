@@ -19,7 +19,7 @@ uchar serNum[5];  // array to store your ID
 
 void setup()
 {
-  Serial.begin(9600); //initialize the serial
+  Serial1.begin(9600); //initialize the serial
   rfid.begin(7, 15, 16, 17, 9, 3);  ////rfid.begin(IRQ_PIN,SCK_PIN,MOSI_PIN,MISO_PIN,NSS_PIN,RST_PIN)
   delay(100);//delay 1s
   rfid.init(); //initialize the RFID
@@ -49,7 +49,7 @@ void loop()
     return;
   }
   // Show card type
-  rfid.showCardType(str);
+ // rfid.showCardType(str);
   //Prevent conflict, return the 4 bytes Serial number of the card
   status = rfid.anticoll(str);
 
@@ -57,15 +57,22 @@ void loop()
   {
 
     TXLED0;
-    Serial.print("TEST\n");   
-    Serial.print("The card's number is: ");
     memcpy(serNum, str, 5);
-    rfid.showCardID(serNum);//show the card ID
-    Serial.println();
-    Serial.println();
+    int blah = 0;
+    for(int i=0; i<5; i++){
+        blah = blah + (int)serNum[i];
+    }
+    Serial.println(blah);
+    String data = String(blah);
+    data = data + ",1";
+
+    char buff[5];
+    data.toCharArray(buff, data.length()+1);
+    Serial1.write(buff);   
+    Serial1.println();
+    
+    //rfid.showCardID(serNum);//show the card ID
+
   }
-  delay(500);
-
-  //rfid.halt(); //command the card into sleep mode 
+  delay(500); 
 }
-
